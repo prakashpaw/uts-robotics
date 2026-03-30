@@ -1,86 +1,19 @@
 import './Product.css'
-
-const specs = [
-  { label: 'Input Voltage', value: '85–265V AC' },
-  { label: 'Communication', value: '4G LTE / NB-IoT / WiFi' },
-  { label: 'Timer Precision', value: '±30 seconds' },
-  { label: 'Operating Temp', value: '-10°C to +70°C' },
-  { label: 'IP Rating', value: 'IP67 Weatherproof' },
-  { label: 'Warranty', value: '3 Years Hardware' },
-  { label: 'Power Consumption', value: '<2W (controller only)' },
-  { label: 'Lifespan', value: '10+ Years' },
-]
-
-const plans = [
-  {
-    name: 'Starter',
-    price: '₹2,499',
-    unit: '/light/year',
-    desc: 'Perfect for small municipalities and pilot deployments.',
-    features: [
-      'Up to 100 lights',
-      'Timer scheduling',
-      'Basic dashboard',
-      'Email alerts',
-      'Email support',
-    ],
-    cta: 'Get Started',
-    highlight: false,
-  },
-  {
-    name: 'City Pro',
-    price: '₹1,899',
-    unit: '/light/year',
-    desc: 'The complete solution for growing smart city deployments.',
-    features: [
-      'Unlimited lights',
-      'Advanced scheduling',
-      'Real-time analytics',
-      'Fault prediction',
-      'SMS + WhatsApp alerts',
-      'Dedicated account manager',
-      'API access',
-    ],
-    cta: 'Most Popular',
-    highlight: true,
-  },
-  {
-    name: 'Enterprise',
-    price: 'Custom',
-    unit: '',
-    desc: 'For state-level or large-scale district deployments.',
-    features: [
-      'Everything in City Pro',
-      'Custom integrations',
-      'On-site installation',
-      'SLA guarantee 99.9%',
-      'White-label option',
-      'Priority support 24/7',
-    ],
-    cta: 'Contact Sales',
-    highlight: false,
-  },
-]
-
-const benefits = [
-  { icon: '💡', title: 'Smart Scheduling', desc: 'Auto on/off based on sunrise/sunset or custom time rules. Never over-illuminate again.' },
-  { icon: '📉', title: 'Energy Savings', desc: 'Adaptive dimming during low-traffic hours cuts consumption without compromising safety.' },
-  { icon: '🔔', title: 'Instant Alerts', desc: 'Get notified the moment any light fails. Resolve issues before residents notice.' },
-  { icon: '📊', title: 'Usage Reports', desc: 'Monthly energy and cost reports delivered automatically to your inbox.' },
-  { icon: '🌐', title: 'Remote Control', desc: 'Override any light or zone from your phone — in seconds, from anywhere.' },
-  { icon: '🔋', title: 'Retrofit Ready', desc: 'Works with existing poles and fixtures. No infrastructure rebuild needed.' },
-]
+import { useData } from '../context/DataContext'
 
 export default function Product() {
+  const { data } = useData();
+  const { heroTitleMain, heroTitleHighlight, heroDesc, specsTitle, specs, featuresTitle, benefits, pricingTitle, pricingDesc, plans } = data.product;
+
   return (
     <div className="product-page">
       <section className="page-hero">
         <div className="page-hero-bg" />
         <div className="container">
           <div className="section-label">Our Product</div>
-          <h1 className="page-hero-title">The UTSLight<br /><span style={{ color: 'var(--accent-gold)' }}>Controller Pro</span></h1>
+          <h1 className="page-hero-title">{heroTitleMain}<br /><span style={{ color: 'var(--accent-gold)' }}>{heroTitleHighlight}</span></h1>
           <p className="page-hero-desc">
-            A ruggedized IoT device that retrofits onto any street light, connecting it to our cloud platform for full automation, monitoring, and control.
+            {heroDesc}
           </p>
         </div>
       </section>
@@ -135,7 +68,7 @@ export default function Product() {
 
             <div>
               <div className="section-label">Specifications</div>
-              <h2 className="section-title" style={{ fontSize: '2rem' }}>Built for India.<br/>Hardened for the field.</h2>
+              <h2 className="section-title" style={{ fontSize: '2rem', whiteSpace: 'pre-line' }}>{specsTitle}</h2>
               <div className="specs-table">
                 {specs.map((s, i) => (
                   <div key={i} className="spec-row">
@@ -153,7 +86,7 @@ export default function Product() {
       <section className="section benefits-section">
         <div className="container">
           <div className="section-label">Features</div>
-          <h2 className="section-title">What comes with every install</h2>
+          <h2 className="section-title">{featuresTitle}</h2>
           <div className="benefits-grid">
             {benefits.map((b, i) => (
               <div key={i} className="benefit-card">
@@ -172,9 +105,9 @@ export default function Product() {
       <section className="section pricing-section">
         <div className="container">
           <div className="section-label">Pricing</div>
-          <h2 className="section-title">Simple, scalable pricing</h2>
+          <h2 className="section-title">{pricingTitle}</h2>
           <p className="section-subtitle" style={{ marginBottom: '48px' }}>
-            Hardware device cost is separate. Software plans are billed annually per light unit.
+            {pricingDesc}
           </p>
           <div className="pricing-grid">
             {plans.map((plan, i) => (

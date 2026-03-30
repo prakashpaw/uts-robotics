@@ -106,6 +106,38 @@ const defaultData = {
       { icon: '🕒', label: 'Office Hours', value: 'Mon–Sat, 9:00 AM – 6:00 PM IST', href: null }
     ]
   },
+  product: {
+    heroTitleMain: 'The UTSLight',
+    heroTitleHighlight: 'Controller Pro',
+    heroDesc: 'A ruggedized IoT device that retrofits onto any street light, connecting it to our cloud platform for full automation, monitoring, and control.',
+    specsTitle: 'Built for India.\\nHardened for the field.',
+    specs: [
+      { label: 'Input Voltage', value: '85–265V AC' },
+      { label: 'Communication', value: '4G LTE / NB-IoT / WiFi' },
+      { label: 'Timer Precision', value: '±30 seconds' },
+      { label: 'Operating Temp', value: '-10°C to +70°C' },
+      { label: 'IP Rating', value: 'IP67 Weatherproof' },
+      { label: 'Warranty', value: '3 Years Hardware' },
+      { label: 'Power Consumption', value: '<2W (controller only)' },
+      { label: 'Lifespan', value: '10+ Years' }
+    ],
+    featuresTitle: 'What comes with every install',
+    benefits: [
+      { icon: '💡', title: 'Smart Scheduling', desc: 'Auto on/off based on sunrise/sunset or custom time rules. Never over-illuminate again.' },
+      { icon: '📉', title: 'Energy Savings', desc: 'Adaptive dimming during low-traffic hours cuts consumption without compromising safety.' },
+      { icon: '🔔', title: 'Instant Alerts', desc: 'Get notified the moment any light fails. Resolve issues before residents notice.' },
+      { icon: '📊', title: 'Usage Reports', desc: 'Monthly energy and cost reports delivered automatically to your inbox.' },
+      { icon: '🌐', title: 'Remote Control', desc: 'Override any light or zone from your phone — in seconds, from anywhere.' },
+      { icon: '🔋', title: 'Retrofit Ready', desc: 'Works with existing poles and fixtures. No infrastructure rebuild needed.' }
+    ],
+    pricingTitle: 'Simple, scalable pricing',
+    pricingDesc: 'Hardware device cost is separate. Software plans are billed annually per light unit.',
+    plans: [
+      { name: 'Starter', price: '₹2,499', unit: '/light/year', desc: 'Perfect for small municipalities and pilot deployments.', features: ['Up to 100 lights', 'Timer scheduling', 'Basic dashboard', 'Email alerts', 'Email support'], cta: 'Get Started', highlight: false },
+      { name: 'City Pro', price: '₹1,899', unit: '/light/year', desc: 'The complete solution for growing smart city deployments.', features: ['Unlimited lights', 'Advanced scheduling', 'Real-time analytics', 'Fault prediction', 'SMS + WhatsApp alerts', 'Dedicated account manager', 'API access'], cta: 'Most Popular', highlight: true },
+      { name: 'Enterprise', price: 'Custom', unit: '', desc: 'For state-level or large-scale district deployments.', features: ['Everything in City Pro', 'Custom integrations', 'On-site installation', 'SLA guarantee 99.9%', 'White-label option', 'Priority support 24/7'], cta: 'Contact Sales', highlight: false }
+    ]
+  },
   gallery: {
     uploads: []
   }
@@ -114,38 +146,61 @@ const defaultData = {
 const DataContext = createContext();
 
 export function DataProvider({ children }) {
-  const [data, setData] = useState(() => {
-    const savedData = localStorage.getItem('uts_robotics_site_data');
-    if (savedData) {
-      try {
-        const parsed = JSON.parse(savedData);
-        return {
+  const [data, setData] = useState(defaultData);
+  const [loading, setLoading] = useState(true);
+
+  // Load from backend on start
+  useEffect(() => {
+    fetch('/api/data')
+      .then(res => {
+        if (!res.ok) throw new Error('No data');
+        return res.json();
+      })
+      .then(parsed => {
+        setData({
           global: { ...defaultData.global, ...parsed.global },
           home: { ...defaultData.home, ...parsed.home },
           about: { ...defaultData.about, ...parsed.about },
           contact: { ...defaultData.contact, ...parsed.contact },
+          product: { ...defaultData.product, ...parsed.product },
           gallery: { ...defaultData.gallery, ...parsed.gallery }
-        };
-      } catch (err) {
-        return defaultData;
-      }
-    }
-    return defaultData;
-  });
+        });
+        setLoading(false);
+      })
+      .catch((err) => {
+        setData(defaultData);
+        setLoading(false);
+      });
+  }, []);
 
-  useEffect(() => {
-    localStorage.setItem('uts_robotics_site_data', JSON.stringify(data));
-  }, [data]);
-
+  // Update logic triggers PUT to backend, authenticated by sessionStorage token
   const updateData = (section, key, value) => {
-    setData((prevData) => ({
-      ...prevData,
-      [section]: {
-        ...prevData[section],
-        [key]: value
+    setData((prevData) => {
+      const newState = {
+        ...prevData,
+        [section]: {
+          ...prevData[section],
+          [key]: value
+        }
+      };
+      
+      const token = sessionStorage.getItem('uts_admin_token');
+      if (token) {
+        fetch('/api/data', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(newState)
+        }).catch(err => console.error(err));
       }
-    }));
+
+      return newState;
+    });
   };
+
+  if (loading) return null; // or an app splash screen
 
   return (
     <DataContext.Provider value={{ data, updateData }}>

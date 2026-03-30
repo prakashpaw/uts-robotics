@@ -5,29 +5,40 @@ import './Admin.css';
 export default function Admin() {
   const { data, updateData } = useData();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [username, setUsername] = useState('admin');
   const [password, setPassword] = useState('');
   const [activeTab, setActiveTab] = useState('home');
   const [saveStatus, setSaveStatus] = useState('');
 
   useEffect(() => {
-    if (sessionStorage.getItem('uts_admin_auth') === 'true') {
+    if (sessionStorage.getItem('uts_admin_token')) {
       setIsAuthenticated(true);
     }
   }, []);
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    if (password === 'admin123') { 
-      setIsAuthenticated(true);
-      sessionStorage.setItem('uts_admin_auth', 'true');
-    } else {
-      alert('Invalid password');
+    try {
+      const res = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      });
+      const authData = await res.json();
+      if (res.ok) {
+        setIsAuthenticated(true);
+        sessionStorage.setItem('uts_admin_token', authData.token);
+      } else {
+        alert(authData.error || 'Login failed');
+      }
+    } catch (err) {
+      alert('Error connecting to backend API');
     }
   };
 
   const handleLogout = () => {
     setIsAuthenticated(false);
-    sessionStorage.removeItem('uts_admin_auth');
+    sessionStorage.removeItem('uts_admin_token');
   };
 
   const handleArrayChange = (section, key, index, field, value) => {
@@ -81,8 +92,14 @@ export default function Admin() {
         <form className="admin-login-form" onSubmit={handleLogin}>
           <h2>Admin Login</h2>
           <input
+            type="text"
+            placeholder="Username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
+          <input
             type="password"
-            placeholder="Enter password (admin123)"
+            placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
@@ -112,6 +129,7 @@ export default function Admin() {
         <button className={activeTab === 'global' ? 'active' : ''} onClick={() => setActiveTab('global')}>Global</button>
         <button className={activeTab === 'home' ? 'active' : ''} onClick={() => setActiveTab('home')}>Home</button>
         <button className={activeTab === 'about' ? 'active' : ''} onClick={() => setActiveTab('about')}>About</button>
+        <button className={activeTab === 'product' ? 'active' : ''} onClick={() => setActiveTab('product')}>Product</button>
         <button className={activeTab === 'contact' ? 'active' : ''} onClick={() => setActiveTab('contact')}>Contact</button>
         <button className={activeTab === 'gallery' ? 'active' : ''} onClick={() => setActiveTab('gallery')}>Gallery</button>
       </div>
@@ -208,6 +226,63 @@ export default function Admin() {
               <div key={i} className="admin-item-row">
                 <input value={ms.year} onChange={(e) => handleArrayChange('about', 'milestones', i, 'year', e.target.value)} placeholder="Year" style={{width: '100px'}} />
                 <input value={ms.event} onChange={(e) => handleArrayChange('about', 'milestones', i, 'event', e.target.value)} placeholder="Event" />
+              </div>
+            ))}
+          </div>
+        )}
+
+        {activeTab === 'product' && (
+          <div className="admin-section">
+            <h2>Product Page - Hero</h2>
+            <div className="admin-item-row" style={{flexDirection: 'column'}}>
+              <label>Hero Title (Main)</label>
+              <input value={data.product.heroTitleMain} onChange={(e) => updateData('product', 'heroTitleMain', e.target.value)} />
+              <label>Hero Title (Highlight)</label>
+              <input value={data.product.heroTitleHighlight} onChange={(e) => updateData('product', 'heroTitleHighlight', e.target.value)} />
+              <label>Hero Description</label>
+              <textarea value={data.product.heroDesc} onChange={(e) => updateData('product', 'heroDesc', e.target.value)} rows={3}></textarea>
+            </div>
+
+            <h2>Product Page - Specs</h2>
+            <div className="admin-item-row" style={{flexDirection: 'column'}}>
+              <label>Specs Title</label>
+              <input value={data.product.specsTitle} onChange={(e) => updateData('product', 'specsTitle', e.target.value)} />
+            </div>
+            {data.product.specs.map((spec, i) => (
+              <div key={i} className="admin-item-row">
+                <input value={spec.label} onChange={(e) => handleArrayChange('product', 'specs', i, 'label', e.target.value)} placeholder="Label" />
+                <input value={spec.value} onChange={(e) => handleArrayChange('product', 'specs', i, 'value', e.target.value)} placeholder="Value" />
+              </div>
+            ))}
+
+            <h2>Product Page - Features</h2>
+            <div className="admin-item-row" style={{flexDirection: 'column'}}>
+              <label>Features Title</label>
+              <input value={data.product.featuresTitle} onChange={(e) => updateData('product', 'featuresTitle', e.target.value)} />
+            </div>
+            {data.product.benefits.map((b, i) => (
+              <div key={i} className="admin-item-row">
+                <input value={b.icon} onChange={(e) => handleArrayChange('product', 'benefits', i, 'icon', e.target.value)} placeholder="Icon" style={{width: '60px'}} />
+                <input value={b.title} onChange={(e) => handleArrayChange('product', 'benefits', i, 'title', e.target.value)} placeholder="Title" />
+                <textarea value={b.desc} onChange={(e) => handleArrayChange('product', 'benefits', i, 'desc', e.target.value)} placeholder="Description" rows={2}></textarea>
+              </div>
+            ))}
+
+            <h2>Product Page - Pricing</h2>
+            <div className="admin-item-row" style={{flexDirection: 'column'}}>
+              <label>Pricing Title</label>
+              <input value={data.product.pricingTitle} onChange={(e) => updateData('product', 'pricingTitle', e.target.value)} />
+              <label>Pricing Description</label>
+              <input value={data.product.pricingDesc} onChange={(e) => updateData('product', 'pricingDesc', e.target.value)} />
+            </div>
+            {data.product.plans.map((plan, i) => (
+              <div key={i} className="admin-item-row admin-testimonial-row">
+                <div style={{display:'flex', gap: '10px'}}>
+                  <input value={plan.name} onChange={(e) => handleArrayChange('product', 'plans', i, 'name', e.target.value)} placeholder="Plan Name" />
+                  <input value={plan.price} onChange={(e) => handleArrayChange('product', 'plans', i, 'price', e.target.value)} placeholder="Price" />
+                  <input value={plan.unit} onChange={(e) => handleArrayChange('product', 'plans', i, 'unit', e.target.value)} placeholder="Unit" />
+                </div>
+                <textarea value={plan.desc} onChange={(e) => handleArrayChange('product', 'plans', i, 'desc', e.target.value)} placeholder="Description" rows={2}></textarea>
               </div>
             ))}
           </div>

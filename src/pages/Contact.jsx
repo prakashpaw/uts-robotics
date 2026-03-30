@@ -14,7 +14,7 @@ const inquiryTypes = [
 export default function Contact() {
   const { data } = useData();
   const { contactInfo, contactTitle, contactDesc } = data.contact;
-  
+
   const [form, setForm] = useState({ name: '', email: '', org: '', phone: '', type: '', message: '' })
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -67,34 +67,17 @@ export default function Contact() {
                 ))}
               </div>
 
-              {/* Map placeholder */}
-              <div className="map-placeholder">
-                <svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg" style={{ width: '100%', height: '100%' }}>
-                  <rect width="400" height="220" fill="#080e1a"/>
-                  {/* Grid */}
-                  {[0,1,2,3,4,5,6].map(i => (
-                    <line key={`h${i}`} x1="0" y1={i*36} x2="400" y2={i*36} stroke="rgba(245,197,24,0.05)" strokeWidth="1"/>
-                  ))}
-                  {[0,1,2,3,4,5,6,7,8,9,10].map(i => (
-                    <line key={`v${i}`} x1={i*40} y1="0" x2={i*40} y2="220" stroke="rgba(245,197,24,0.05)" strokeWidth="1"/>
-                  ))}
-                  {/* Roads */}
-                  <path d="M0 110 Q100 90 200 110 Q300 130 400 110" stroke="#1e293b" strokeWidth="12" fill="none"/>
-                  <path d="M180 0 Q195 60 200 110 Q205 160 210 220" stroke="#1e293b" strokeWidth="10" fill="none"/>
-                  <path d="M0 155 Q120 148 400 155" stroke="#1e293b" strokeWidth="8" fill="none"/>
-                  {/* Blocks */}
-                  <rect x="50" y="60" width="60" height="40" rx="4" fill="#0d1424"/>
-                  <rect x="120" y="50" width="50" height="50" rx="4" fill="#0d1424"/>
-                  <rect x="240" y="65" width="70" height="35" rx="4" fill="#0d1424"/>
-                  <rect x="50" y="165" width="80" height="30" rx="4" fill="#0d1424"/>
-                  <rect x="280" y="160" width="90" height="40" rx="4" fill="#0d1424"/>
-                  {/* Pin */}
-                  <circle cx="200" cy="108" r="16" fill="rgba(245,197,24,0.15)"/>
-                  <circle cx="200" cy="108" r="8" fill="#f5c518"/>
-                  <circle cx="200" cy="108" r="4" fill="#04080f"/>
-                  <text x="200" y="90" textAnchor="middle" fill="#f5c518" fontSize="9" fontFamily="sans-serif" fontWeight="bold">UTS Robotics HQ</text>
-                  <text x="200" y="100" textAnchor="middle" fill="#8898b8" fontSize="7" fontFamily="sans-serif">Baner, Pune</text>
-                </svg>
+              {/* Map embedded */}
+              <div className="map-placeholder" style={{ border: '1px solid var(--border-color)', borderRadius: '12px', overflow: 'hidden' }}>
+                <iframe
+                  width="100%"
+                  height="100%"
+                  frameBorder="0"
+                  scrolling="no"
+                  marginHeight="0"
+                  marginWidth="0"
+                  src="https://www.openstreetmap.org/export/embed.html?bbox=73.76632690429689%2C18.544778170889218%2C73.80666732788087%2C18.571477747971714&amp;layer=mapnik&amp;marker=18.55812869153578%2C73.78649711608887"
+                ></iframe>
               </div>
             </div>
 
@@ -107,7 +90,7 @@ export default function Contact() {
                   <p className="success-desc">
                     Thank you for reaching out. Our team will get back to you within 24 hours.
                   </p>
-                  <button className="btn-outline" onClick={() => { setSubmitted(false); setForm({ name:'',email:'',org:'',phone:'',type:'',message:'' }) }}>
+                  <button className="btn-outline" onClick={() => { setSubmitted(false); setForm({ name: '', email: '', org: '', phone: '', type: '', message: '' }) }}>
                     Send another message
                   </button>
                 </div>
@@ -122,7 +105,7 @@ export default function Contact() {
                         type="text"
                         name="name"
                         className="form-input"
-                        placeholder="Ramesh Kulkarni"
+                        placeholder="Name"
                         value={form.name}
                         onChange={handleChange}
                         required
@@ -134,7 +117,7 @@ export default function Contact() {
                         type="email"
                         name="email"
                         className="form-input"
-                        placeholder="ramesh@pune.gov.in"
+                        placeholder="Email"
                         value={form.email}
                         onChange={handleChange}
                         required
@@ -147,9 +130,9 @@ export default function Contact() {
                       <label className="form-label">Organisation</label>
                       <input
                         type="text"
-                        name="org"
+                        name="Organization"
                         className="form-input"
-                        placeholder="Pune Municipal Corporation"
+                        placeholder="Organization"
                         value={form.org}
                         onChange={handleChange}
                       />
@@ -160,7 +143,7 @@ export default function Contact() {
                         type="tel"
                         name="phone"
                         className="form-input"
-                        placeholder="+91 98765 43210"
+                        placeholder="Phone"
                         value={form.phone}
                         onChange={handleChange}
                       />
@@ -188,7 +171,7 @@ export default function Contact() {
                     <textarea
                       name="message"
                       className="form-input form-textarea"
-                      placeholder="Tell us about your city's street lighting needs, approximate number of lights, area covered, etc."
+                      placeholder="Message"
                       rows={5}
                       value={form.message}
                       onChange={handleChange}
@@ -203,7 +186,7 @@ export default function Contact() {
                       <>
                         Send Message
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                          <path d="M5 12h14M12 5l7 7-7 7"/>
+                          <path d="M5 12h14M12 5l7 7-7 7" />
                         </svg>
                       </>
                     )}
