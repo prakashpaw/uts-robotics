@@ -1,0 +1,137 @@
+.admin-login-container {
+  min-height: 80vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.admin-login-form {
+  background: var(--bg-card);
+  padding: 40px;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  max-width: 400px;
+}
+
+.admin-login-form h2 {
+  font-family: var(--font-display);
+  color: var(--text-primary);
+  margin-bottom: 10px;
+}
+
+.admin-login-form input {
+  background: var(--bg-hover);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  padding: 12px 16px;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 1rem;
+}
+
+.admin-dashboard {
+  padding: 100px 24px 60px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.admin-header h1 {
+  font-family: var(--font-display);
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.admin-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 30px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 10px;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.admin-tabs button {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  font-weight: 500;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.admin-tabs button:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.admin-tabs button.active {
+  background: rgba(245, 197, 24, 0.1);
+  color: var(--color-accent);
+}
+
+.admin-section {
+  background: var(--bg-card);
+  padding: 30px;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+}
+
+.admin-section h2 {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  color: var(--text-primary);
+  margin-top: 40px;
+}
+
+.admin-section h2:first-child {
+  margin-top: 0;
+}
+
+.admin-item-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.admin-feature-row, .admin-testimonial-row, .admin-team-row {
+  flex-direction: column;
+  background: rgba(255, 255, 255, 0.02);
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.admin-item-row input, .admin-item-row textarea {
+  flex: 1;
+  background: var(--bg-body);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-family: inherit;
+}
+
+.admin-item-row textarea {
+  resize: vertical;
+}
+
+@media (max-width: 600px) {
+  .admin-item-row { flex-direction: column; }
+  .admin-header { flex-direction: column; align-items: flex-start; gap: 16px; }
+  .admin-header div { width: 100%; flex-wrap: wrap; }
+}
