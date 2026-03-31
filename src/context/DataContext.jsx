@@ -146,34 +146,32 @@ const defaultData = {
 const DataContext = createContext();
 
 export function DataProvider({ children }) {
-  const [data, setData] = useState(defaultData);
-  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const savedData = localStorage.getItem('uts_robotics_site_data');
+      if (savedData) {
+        try {
+          const parsed = JSON.parse(savedData);
+          return {
+            global: { ...defaultData.global, ...parsed.global },
+            home: { ...defaultData.home, ...parsed.home },
+            about: { ...defaultData.about, ...parsed.about },
+            contact: { ...defaultData.contact, ...parsed.contact },
+            product: { ...defaultData.product, ...parsed.product },
+            gallery: { ...defaultData.gallery, ...parsed.gallery }
+          };
+        } catch (err) {
+          return defaultData;
+        }
+      }
+    }
+    return defaultData;
+  });
 
-  // Load from backend on start
   useEffect(() => {
-    fetch('/api/data')
-      .then(res => {
-        if (!res.ok) throw new Error('No data');
-        return res.json();
-      })
-      .then(parsed => {
-        setData({
-          global: { ...defaultData.global, ...parsed.global },
-          home: { ...defaultData.home, ...parsed.home },
-          about: { ...defaultData.about, ...parsed.about },
-          contact: { ...defaultData.contact, ...parsed.contact },
-          product: { ...defaultData.product, ...parsed.product },
-          gallery: { ...defaultData.gallery, ...parsed.gallery }
-        });
-        setLoading(false);
-      })
-      .catch((err) => {
-        setData(defaultData);
-        setLoading(false);
-      });
-  }, []);
+    localStorage.setItem('uts_robotics_site_data', JSON.stringify(data));
+  }, [data]);
 
-  // Update logic triggers PUT to backend, authenticated by sessionStorage token
   const updateData = (section, key, value) => {
     setData((prevData) => {
       const newState = {
@@ -183,24 +181,9 @@ export function DataProvider({ children }) {
           [key]: value
         }
       };
-      
-      const token = sessionStorage.getItem('uts_admin_token');
-      if (token) {
-        fetch('/api/data', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify(newState)
-        }).catch(err => console.error(err));
-      }
-
       return newState;
     });
   };
-
-  if (loading) return null; // or an app splash screen
 
   return (
     <DataContext.Provider value={{ data, updateData }}>

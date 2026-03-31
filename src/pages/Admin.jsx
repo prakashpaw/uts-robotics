@@ -11,34 +11,24 @@ export default function Admin() {
   const [saveStatus, setSaveStatus] = useState('');
 
   useEffect(() => {
-    if (sessionStorage.getItem('uts_admin_token')) {
+    if (sessionStorage.getItem('uts_admin_auth') === 'true') {
       setIsAuthenticated(true);
     }
   }, []);
 
-  const handleLogin = async (e) => {
+  const handleLogin = (e) => {
     e.preventDefault();
-    try {
-      const res = await fetch('/api/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password })
-      });
-      const authData = await res.json();
-      if (res.ok) {
-        setIsAuthenticated(true);
-        sessionStorage.setItem('uts_admin_token', authData.token);
-      } else {
-        alert(authData.error || 'Login failed');
-      }
-    } catch (err) {
-      alert('Error connecting to backend API');
+    if (username === 'admin' && password === 'admin123') {
+      setIsAuthenticated(true);
+      sessionStorage.setItem('uts_admin_auth', 'true');
+    } else {
+      alert('Invalid login credentials');
     }
   };
 
   const handleLogout = () => {
     setIsAuthenticated(false);
-    sessionStorage.removeItem('uts_admin_token');
+    sessionStorage.removeItem('uts_admin_auth');
   };
 
   const handleArrayChange = (section, key, index, field, value) => {

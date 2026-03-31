@@ -130,7 +130,7 @@ export default function Contact() {
                       <label className="form-label">Organisation</label>
                       <input
                         type="text"
-                        name="Organization"
+                        name="org"
                         className="form-input"
                         placeholder="Organization"
                         value={form.org}
